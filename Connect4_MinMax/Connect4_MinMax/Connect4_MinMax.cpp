@@ -196,7 +196,7 @@ typedef struct board_state
 	int board[N_ROWS][N_COLUMNS]; //board state
 	int next_moves; //points to the location on stack holding the
 					//next possible moves from this state.
-};
+}board_state;
 
 typedef struct children
 {
@@ -208,7 +208,7 @@ typedef struct children
 typedef struct state
 {
 	int alpha, beta, m, t;
-};
+}state;
 
 children STACK[1024];
 //state STATE[1024];
@@ -235,10 +235,11 @@ void generate(int l, int player)
 	STACK[count].q = 0;
 
 	int flag = 0;
+	int i, j;
 
-	for (int i = 0; i < N_COLUMNS; i++)
+	for (i = 0; i < N_COLUMNS; i++)
 	{
-		for (int j = 0; j < N_ROWS && STACK[r[l]].p[STACK[r[l]].q].board[j][i] == 0; j++);
+		for (j = 0; j < N_ROWS && STACK[r[l]].p[STACK[r[l]].q].board[j][i] == 0; j++);
 		if (j == 0)
 		{
 			continue;
@@ -304,7 +305,7 @@ int getHeuristic(int board[N_ROWS][N_COLUMNS])
 
 		if (score >= 4)
 		{
-			if (current_player = 1)
+			if (current_player == 1)
 				return 5;
 			else
 				return -5;
@@ -464,7 +465,7 @@ int getNextMove()
 
 	int max=values[0], move = 0;
 	printf("VAlues: \n");
-	for (int i = 1; i < N_COLUMNS; i++)
+	for (i = 1; i < N_COLUMNS; i++)
 	{
 		printf("%d\n",values[i]);
 		if (values[i]>=max)
