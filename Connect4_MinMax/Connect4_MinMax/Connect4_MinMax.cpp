@@ -8,7 +8,7 @@
 #define true 1
 #define N_ROWS 8
 #define N_COLUMNS 8
-#define DEPTH 60
+#define DEPTH 300
 
 int table[N_ROWS][N_COLUMNS];
 
@@ -211,10 +211,10 @@ typedef struct state
 };
 
 children STACK[1024];
-state STATE[1024];
+//state STATE[1024];
 
 #define L 1024
-#define INIFINITY 9999999999
+#define INIFINITY 99999
 int count = 1;
 
 int a[L + 2], r[L + 1];
@@ -238,15 +238,15 @@ void generate(int l, int player)
 
 	for (int i = 0; i < N_COLUMNS; i++)
 	{
-		for (int j = N_ROWS - 1; j >= 0 && STACK[r[l]].p[STACK[r[l]].q].board[j][i] == 0; j++);
-		if (j == N_ROWS-1)
+		for (int j = 0; j < N_ROWS && STACK[r[l]].p[STACK[r[l]].q].board[j][i] == 0; j++);
+		if (j == 0)
 		{
 			continue;
 		}
 		flag++;
 		copy_board(STACK[count].p[++(STACK[count].max)].board, STACK[r[l]].p[STACK[r[l]].q].board);
 		STACK[count].p[STACK[count].max].board[j + 1][i] = player;
-		STACK[count].max++;
+		//STACK[count].max++;
 	}
 
 	if (flag == 0)
@@ -288,6 +288,7 @@ int getHeuristic(int board[N_ROWS][N_COLUMNS])
 
 		for (current_row = 0; current_row < N_ROWS && board[current_row][j] != 0; current_row++);
 
+		current_row--;
 		if (board[current_row][current_move] == 1)
 			current_player = 1;
 		else
@@ -301,7 +302,7 @@ int getHeuristic(int board[N_ROWS][N_COLUMNS])
 				break;
 		}
 
-		if (i == 3)
+		if (score >= 4)
 		{
 			if (current_player = 1)
 				return 5;
@@ -321,7 +322,7 @@ int getHeuristic(int board[N_ROWS][N_COLUMNS])
 		}
 		if (sequence_length >= 4)
 		{
-			if (current_player = 1)
+			if (current_player == 1)
 				return 5;
 			else
 				return -5;
@@ -343,7 +344,7 @@ int getHeuristic(int board[N_ROWS][N_COLUMNS])
 		}
 		if (sequence_length >= 4)
 		{
-			if (current_player = 1)
+			if (current_player == 1)
 				return 5;
 			else
 				return -5;
@@ -364,7 +365,7 @@ int getHeuristic(int board[N_ROWS][N_COLUMNS])
 		}
 		if (sequence_length >= 4)
 		{
-			if (current_player = 1)
+			if (current_player == 1)
 				return 5;
 			else
 				return -5;
@@ -373,15 +374,16 @@ int getHeuristic(int board[N_ROWS][N_COLUMNS])
 		if (sequence_length > score)
 			score = sequence_length;
 
-		if (current_player = 1)
+		if (current_player == 1)
 		{
-			if (player1 > score)
+			if (player1 < score)
 				player1 = score;
 		}
 		else
-			if (player2 > score)
+			if (player2 < score)
 				player2 = score;
 	}
+	printf("player1, player2: %d, %d\n", player1 ,player2);
 
 	return player1 - player2;
 }
@@ -399,7 +401,7 @@ int alphabeta(int board[N_ROWS][N_COLUMNS])
 	r[0] = 0;
 	STACK[r[0]].max = 0;
 	copy_board(STACK[r[0]].p[0].board, board);
-	int player = 2;
+	int player = 1;
 
 F2: generate(l, player);
 	r[l + 1] = first(l);
@@ -442,13 +444,15 @@ int getNextMove()
 	int copy[N_ROWS][N_COLUMNS];
 
 	int values[N_COLUMNS];
+	int i, j;
 
-	for (int j = 0; j < N_COLUMNS; j++)
+	for (j = 0; j < N_COLUMNS; j++)
 	{
 		copy_board(copy, table);
-		for (int i = N_ROWS - 1; i >= 0 && copy[i][j] == 0; i--);
-		if (i == N_ROWS - 1)
+		for (i = 0; i < N_ROWS && copy[i][j] == 0; i++);
+		if (i == 0)
 		{
+			printf("here\n");
 			values[j] = -1;
 			continue;
 		}
@@ -463,7 +467,7 @@ int getNextMove()
 	for (int i = 1; i < N_COLUMNS; i++)
 	{
 		printf("%d\n",values[i]);
-		if (values[i]>max)
+		if (values[i]>=max)
 		{
 			max = values[i];
 			move = i;
